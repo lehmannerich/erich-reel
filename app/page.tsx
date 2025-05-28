@@ -32,6 +32,7 @@ export default function ScatterText() {
   const resetTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const charsRef = useRef<Element[]>([]);
   const isIdleAnimatingRef = useRef(false);
+  const lastMouseMoveTime = useRef(0);
 
   const clearTimeouts = () => {
     if (idleTimeoutRef.current) {
@@ -103,12 +104,23 @@ export default function ScatterText() {
     const { chars } = splitText(h1Element);
     charsRef.current = chars;
 
+    // Throttled mouse move handler for better performance
     const handlePointerMove = (event: PointerEvent) => {
       const now = performance.now();
+
+      // Throttle to ~60fps max
+      if (now - lastMouseMoveTime.current < 16) return;
+      lastMouseMoveTime.current = now;
+
       const timeSinceLastEvent = (now - prevEvent.current) / 1000;
       prevEvent.current = now;
-      velocityX.set(event.movementX / timeSinceLastEvent);
-      velocityY.set(event.movementY / timeSinceLastEvent);
+
+      // Use requestAnimationFrame for smooth velocity updates
+      requestAnimationFrame(() => {
+        velocityX.set(event.movementX / timeSinceLastEvent);
+        velocityY.set(event.movementY / timeSinceLastEvent);
+      });
+
       resetIdleState();
     };
 
@@ -116,11 +128,14 @@ export default function ScatterText() {
       if (document.hidden) {
         clearTimeouts();
       } else {
-        resetIdleState();
+        // Use requestAnimationFrame to avoid blocking
+        requestAnimationFrame(() => {
+          resetIdleState();
+        });
       }
     };
 
-    document.addEventListener("pointermove", handlePointerMove);
+    document.addEventListener("pointermove", handlePointerMove, { passive: true });
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     hover(chars, (element) => {

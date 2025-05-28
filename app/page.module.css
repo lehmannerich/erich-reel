@@ -60,133 +60,51 @@
 
 .tweetCard {
   background: #ffffff;
-  border: 1px solid #eff3f4;
-  border-radius: 0;
-  padding: 16px;
-  max-width: 598px;
+  padding: 24px;
+  max-width: 700px; /* Increased max-width for more content */
   width: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
     sans-serif;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.tweetCard:hover {
-  background-color: #f7f7f7;
-}
-
-/* Tweet Header */
-.tweetHeader {
-  display: flex;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.profilePicture {
-  width: 48px;
-  height: 48px;
-  margin-right: 12px;
-  flex-shrink: 0;
-}
-
-.profilePicturePlaceholder {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  background-color: #1d9bf0;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 20px;
-  font-weight: 700;
-}
-
-.tweetMeta {
-  flex: 1;
-  min-width: 0;
-}
-
-.nameRow {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-
-.displayName {
-  font-weight: 700;
-  color: #0f1419;
-  margin-right: 4px;
-}
-
-.verifiedBadge {
-  width: 20px;
-  height: 20px;
-  margin-right: 4px;
-}
-
-.handle {
-  color: #536471;
-  margin-right: 4px;
-}
-
-.dot {
-  color: #536471;
-  margin: 0 4px;
-}
-
-.timestamp {
-  color: #536471;
-}
-
-.moreButton {
-  width: 35px;
-  height: 35px;
-  margin-left: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: background-color 0.2s ease;
-  cursor: pointer;
-}
-
-.moreButton:hover {
-  background-color: rgba(15, 20, 25, 0.1);
-}
-
-.moreButton svg {
-  width: 20px;
-  height: 20px;
-  fill: #536471;
+  border: 1px solid #e1e8ed; /* Add back a subtle border */
+  border-radius: 16px; /* Rounded corners */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); /* Softer shadow */
 }
 
 /* Tweet Body */
 .tweetBody {
-  margin-left: 60px; /* 48px profile + 12px margin */
-  margin-bottom: 12px;
+  /* margin-left: 0; /* Removed left margin as header is gone */
+  margin-bottom: 20px; /* Increased bottom margin */
 }
 
-.tweetText {
-  font-size: 15px;
-  line-height: 20px;
+.tweetHeadline {
+  font-size: 2.5rem; /* Larger headline font size */
+  font-weight: 700;
+  line-height: 1.3;
   color: #0f1419;
-  margin: 0;
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  margin-bottom: 16px; /* Space between headline and lorem ipsum */
 }
 
 .tweetNumber {
   font-weight: 700;
   color: #1d9bf0;
+  margin-right: 8px;
+}
+
+.tweetLoremIpsum {
+  font-size: 1.1rem; /* Slightly larger body text */
+  line-height: 1.6;
+  color: #333333; /* Darker gray for body text */
+  margin: 0;
 }
 
 /* Tweet Footer */
 .tweetFooter {
-  margin-left: 60px; /* 48px profile + 12px margin */
+  /* margin-left: 0; /* Removed left margin */
   display: flex;
-  justify-content: space-between;
-  max-width: 425px;
+  justify-content: space-around; /* Space out actions more evenly */
+  max-width: 100%; /* Footer can take full width of card */
+  padding-top: 16px;
+  border-top: 1px solid #e1e8ed; /* Separator line for footer */
 }
 
 .tweetAction {
@@ -194,17 +112,16 @@
   align-items: center;
   gap: 8px;
   padding: 8px;
-  margin: -8px;
-  border-radius: 50%;
+  border-radius: 9999px; /* Pill shape for actions */
   transition: all 0.2s ease;
   cursor: pointer;
   color: #536471;
-  font-size: 13px;
+  font-size: 14px; /* Slightly larger action text */
 }
 
 .tweetAction svg {
-  width: 18px;
-  height: 18px;
+  width: 20px; /* Slightly larger icons */
+  height: 20px;
   fill: currentColor;
 }
 

@@ -10,8 +10,12 @@
   },
   "dependencies": {
     "motion": "^12.15.0",
+    "motion-plus": "^0.1.9",
     "next": "15.3.2",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.1.6"
   }
 }

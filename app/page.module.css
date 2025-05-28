@@ -26,3 +26,24 @@
   font-size: 1.2rem;
   color: #666;
 }
+
+.pageContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #ffffff; /* Plain white background */
+  padding: 2rem;
+}
+
+/* Styles for the h1 inside ScatterText, if needed for centering or appearance */
+.pageContainer .h1 {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; /* Common sans-serif stack */
+  font-size: 5rem; /* Increased font size */
+  font-weight: bold; /* Bold text */
+  color: #000000; /* Plain black text */
+  text-align: center;
+  line-height: 1.2; /* Adjust line height for multi-line text */
+  max-width: 800px; /* Constrain width for better readability */
+}

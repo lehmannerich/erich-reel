@@ -7,7 +7,7 @@ import { useEffect, useRef } from "react";
 import styles from "./page.module.css";
 
 // --- Animation Configuration Variables ---
-const IDLE_TRIGGER_DURATION_MS = 800;
+const IDLE_TRIGGER_DURATION_MS = 100;
 const IDLE_ROTATION_DEGREES = 8;
 const IDLE_ANIMATION_STAGGER_MS = 40;
 const IDLE_ANIMATION_SPRING_STIFFNESS = 200;
@@ -157,7 +157,7 @@ export default function ScatterText() {
 
   return (
     <div className={styles.pageContainer} ref={containerRef}>
-      <h1 className={styles.h1}>Move your pointer over the text to scatter.</h1>
+      <h1 className={styles.h1}>All the reasons I'd be great at OpenAI.</h1>
       <Stylesheet />
     </div>
   );

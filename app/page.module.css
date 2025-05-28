@@ -47,3 +47,189 @@
   line-height: 1.2; /* Adjust line height for multi-line text */
   max-width: 800px; /* Constrain width for better readability */
 }
+
+/* Tweet Section Styles */
+.tweetSection {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 2rem;
+}
+
+.tweetCard {
+  background: #ffffff;
+  border: 1px solid #eff3f4;
+  border-radius: 0;
+  padding: 16px;
+  max-width: 598px;
+  width: 100%;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial,
+    sans-serif;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.tweetCard:hover {
+  background-color: #f7f7f7;
+}
+
+/* Tweet Header */
+.tweetHeader {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.profilePicture {
+  width: 48px;
+  height: 48px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.profilePicturePlaceholder {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: #1d9bf0;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.tweetMeta {
+  flex: 1;
+  min-width: 0;
+}
+
+.nameRow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.displayName {
+  font-weight: 700;
+  color: #0f1419;
+  margin-right: 4px;
+}
+
+.verifiedBadge {
+  width: 20px;
+  height: 20px;
+  margin-right: 4px;
+}
+
+.handle {
+  color: #536471;
+  margin-right: 4px;
+}
+
+.dot {
+  color: #536471;
+  margin: 0 4px;
+}
+
+.timestamp {
+  color: #536471;
+}
+
+.moreButton {
+  width: 35px;
+  height: 35px;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.moreButton:hover {
+  background-color: rgba(15, 20, 25, 0.1);
+}
+
+.moreButton svg {
+  width: 20px;
+  height: 20px;
+  fill: #536471;
+}
+
+/* Tweet Body */
+.tweetBody {
+  margin-left: 60px; /* 48px profile + 12px margin */
+  margin-bottom: 12px;
+}
+
+.tweetText {
+  font-size: 15px;
+  line-height: 20px;
+  color: #0f1419;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.tweetNumber {
+  font-weight: 700;
+  color: #1d9bf0;
+}
+
+/* Tweet Footer */
+.tweetFooter {
+  margin-left: 60px; /* 48px profile + 12px margin */
+  display: flex;
+  justify-content: space-between;
+  max-width: 425px;
+}
+
+.tweetAction {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  margin: -8px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  color: #536471;
+  font-size: 13px;
+}
+
+.tweetAction svg {
+  width: 18px;
+  height: 18px;
+  fill: currentColor;
+}
+
+/* Hover effects for actions */
+.tweetAction:nth-child(1):hover {
+  color: #1d9bf0;
+  background-color: rgba(29, 155, 240, 0.1);
+}
+
+.tweetAction:nth-child(2):hover {
+  color: #00ba7c;
+  background-color: rgba(0, 186, 124, 0.1);
+}
+
+.tweetAction:nth-child(3):hover {
+  color: #f91880;
+  background-color: rgba(249, 24, 128, 0.1);
+}
+
+.tweetAction:nth-child(4):hover {
+  color: #1d9bf0;
+  background-color: rgba(29, 155, 240, 0.1);
+}
+
+.tweetAction:nth-child(5):hover {
+  color: #1d9bf0;
+  background-color: rgba(29, 155, 240, 0.1);
+}

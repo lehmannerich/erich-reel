@@ -33,6 +33,7 @@ export default function ScatterText() {
   const charsRef = useRef<Element[]>([]);
   const isIdleAnimatingRef = useRef(false);
   const lastMouseMoveTime = useRef(0);
+  const hasScatteredRef = useRef(false);
 
   const clearTimeouts = () => {
     if (idleTimeoutRef.current) {
@@ -46,6 +47,9 @@ export default function ScatterText() {
   };
 
   const startIdleDetection = () => {
+    // Only start idle detection if a letter has been scattered
+    if (!hasScatteredRef.current) return;
+
     clearTimeouts();
 
     idleTimeoutRef.current = setTimeout(() => {
@@ -83,6 +87,7 @@ export default function ScatterText() {
               );
             });
             isIdleAnimatingRef.current = false;
+            hasScatteredRef.current = false; // Reset the flag after animation completes
           }
         }, RESET_TRIGGER_DURATION_MS);
       }
@@ -121,7 +126,10 @@ export default function ScatterText() {
         velocityY.set(event.movementY / timeSinceLastEvent);
       });
 
-      resetIdleState();
+      // Only reset idle state if we've scattered before
+      if (hasScatteredRef.current) {
+        resetIdleState();
+      }
     };
 
     const handleVisibilityChange = () => {
@@ -130,7 +138,10 @@ export default function ScatterText() {
       } else {
         // Use requestAnimationFrame to avoid blocking
         requestAnimationFrame(() => {
-          resetIdleState();
+          // Only reset if we've scattered before
+          if (hasScatteredRef.current) {
+            resetIdleState();
+          }
         });
       }
     };
@@ -139,6 +150,8 @@ export default function ScatterText() {
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     hover(chars, (element) => {
+      // Mark that we've scattered at least once
+      hasScatteredRef.current = true;
       resetIdleState();
 
       const speed = Math.sqrt(
@@ -161,7 +174,8 @@ export default function ScatterText() {
       );
     });
 
-    startIdleDetection();
+    // Don't start idle detection immediately anymore
+    // startIdleDetection();
 
     return () => {
       document.removeEventListener("pointermove", handlePointerMove);

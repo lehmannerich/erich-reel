@@ -354,29 +354,15 @@
 }
 
 .underlineText {
-  text-decoration: underline; /* Kept for other *word* uses */
+  text-decoration: underline; /* For general asterisk usage in headlines if any */
 }
 
-.highlightContainer {
-  position: relative;
-  display: inline; /* or inline-block if needed, but inline is often better for text flow */
-  /* No padding/margin here, let the animated marker handle its own appearance */
-}
-
-.animatedMarker {
-  position: absolute;
-  left: 0;
-  bottom: 0.05em; /* Adjust to position highlight slightly below baseline or through middle */
-  height: 0.5em; /* Thickness of the highlight */
-  background-color: rgba(
-    255,
-    223,
-    0,
-    0.7
-  ); /* Yellow, slightly more saturated, semi-transparent */
-  z-index: -1; /* Behind the text */
-  /* Width is animated by Framer Motion */
-  border-radius: 1px; /* Optional: slightly rounded ends for the marker */
+/* New style for static body text highlighting */
+.bodyTextHighlight {
+  background-color: rgba(255, 223, 0, 0.7); /* Yellow, semi-transparent */
+  padding: 0.1em 0.2em; /* Small padding to give the highlight some space */
+  border-radius: 3px; /* Slightly rounded corners for the highlight */
+  /* display: inline; /* Default for span, but good to be explicit if needed */
 }
 
 /* Contact List Styles */

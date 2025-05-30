@@ -238,6 +238,7 @@ interface TweetSectionProps {
   logoCarouselItems?: string[];
   carouselStampAppearDelayMs?: number;
   carouselStampVisibleDurationMs?: number;
+  highlightPhraseInBody?: string;
 }
 
 function TweetSection({
@@ -251,6 +252,7 @@ function TweetSection({
   logoCarouselItems,
   carouselStampAppearDelayMs,
   carouselStampVisibleDurationMs,
+  highlightPhraseInBody,
 }: TweetSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -373,6 +375,22 @@ function TweetSection({
     return <span className={styles.contactTextItem}>{line}</span>;
   };
 
+  const renderHighlightedBodyText = (text: string, phrase: string) => {
+    if (!phrase || !text.includes(phrase)) {
+      return text;
+    }
+    const parts = text.split(new RegExp(`(${phrase})`, "gi"));
+    return parts.map((part, index) =>
+      part.toLowerCase() === phrase.toLowerCase() ? (
+        <span key={index} className={styles.bodyTextHighlight}>
+          {part}
+        </span>
+      ) : (
+        part
+      )
+    );
+  };
+
   return (
     <div
       className={styles.tweetSection}
@@ -394,7 +412,9 @@ function TweetSection({
           ) : bodyText ? (
             bodyText.split("\n\n").map((paragraph, index) => (
               <p key={index} className={styles.tweetBodyParagraph}>
-                {paragraph}
+                {highlightPhraseInBody
+                  ? renderHighlightedBodyText(paragraph, highlightPhraseInBody)
+                  : paragraph}
               </p>
             ))
           ) : null}
@@ -533,8 +553,8 @@ const LogoSlide = forwardRef(function LogoSlide(
       <Image
         src={imagePath}
         alt={imagePath.split("/").pop()?.split(".")[0] || "logo"}
-        layout="fill"
-        objectFit="contain"
+        fill
+        style={{ objectFit: "contain" }}
       />
       <AnimatePresence>
         {isStamped && (
@@ -555,9 +575,9 @@ const LogoSlide = forwardRef(function LogoSlide(
             <Image
               src="/closed.png"
               alt="Closed Stamp"
-              width={100} // Placeholder, actual size controlled by CSS
-              height={100} // Placeholder, actual size controlled by CSS
-              objectFit="contain"
+              width={100}
+              height={100}
+              style={{ objectFit: "contain" }}
             />
           </motion.div>
         )}
@@ -659,17 +679,18 @@ const tweetData = [
     number: "2",
     headline: "I'm good at sales.",
     bodyText:
-      "In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k.",
+      "In 2023, I started a new company from nothing and closed over €400k of sales volume in the first year. I mainly sold to startups and the average deal size was €20k.",
     logoCarouselItems: [
       "/startupsales/kitekraft.png",
       "/startupsales/aisupervision.png",
       "/startupsales/voize.png",
       "/startupsales/gitpod.png",
     ],
+    highlightPhraseInBody: "closed over €400k of sales volume in the first year",
   },
   {
     number: "3",
-    headline: "Like, *really* good at sales.",
+    headline: "Like, really good at sales.",
     bodyText:
       "In 2020, I co-founded a company for virtual events and within 2 years I closed over €1M worth of sales volume. I was solely responsible for the sales pipeline and every deal we closed. These weren't easy deals, since we were selling to some of the most renowned research institutions in the world. Here are a few examples:",
     logoCarouselItems: [
@@ -682,6 +703,7 @@ const tweetData = [
     ],
     carouselStampAppearDelayMs: LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS_FAST,
     carouselStampVisibleDurationMs: LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS_FAST,
+    highlightPhraseInBody: "within 2 years I closed over €1M worth of sales volume",
   },
   {
     number: "4",

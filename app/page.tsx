@@ -1,9 +1,10 @@
 "use client";
 
+import { motion } from "framer-motion";
 import { splitText } from "motion-plus";
 import { animate, hover, useMotionValue } from "motion/react";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 
 // --- Layout Configuration Variables ---
@@ -24,6 +25,10 @@ const RESET_ANIMATION_SPRING_DAMPING = 25;
 const SCATTER_DISTANCE_FACTOR = 0.1;
 const SCATTER_ANIMATION_SPRING_STIFFNESS = 100;
 const SCATTER_ANIMATION_SPRING_DAMPING = 50;
+
+// --- Highlight Configuration Variables ---
+const HIGHLIGHT_INTERACTION_THRESHOLD = 0.75; // 75% of the element must be visible
+const HIGHLIGHT_DELAY_MS = 1000; // 1 second delay
 // --- End of Configuration Variables ---
 
 export default function Home() {
@@ -218,16 +223,82 @@ function TweetSection({
   linkUrl,
   checklistItems,
 }: TweetSectionProps) {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isWordHighlighted, setIsWordHighlighted] = useState(false);
+  const hasBeenHighlightedRef = useRef(false);
+
+  useEffect(() => {
+    if (headline !== "Like, *really* good at sales." || !sectionRef.current) {
+      return;
+    }
+    const currentSectionRef = sectionRef.current;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (
+          entry.isIntersecting &&
+          entry.intersectionRatio >= HIGHLIGHT_INTERACTION_THRESHOLD
+        ) {
+          if (!hasBeenHighlightedRef.current && !timerRef.current) {
+            timerRef.current = setTimeout(() => {
+              if (!hasBeenHighlightedRef.current) {
+                setIsWordHighlighted(true);
+                hasBeenHighlightedRef.current = true;
+                observer.unobserve(currentSectionRef);
+              }
+            }, HIGHLIGHT_DELAY_MS);
+          }
+        } else {
+          if (timerRef.current) {
+            clearTimeout(timerRef.current);
+            timerRef.current = null;
+          }
+        }
+      },
+      { threshold: HIGHLIGHT_INTERACTION_THRESHOLD }
+    );
+    observer.observe(currentSectionRef);
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+      observer.disconnect();
+    };
+  }, [headline]);
+
   const renderHeadline = () => {
     if (headline.includes("*")) {
       const parts = headline.split("*");
-      return (
-        <>
-          {parts[0]}
-          <span className={styles.underlineText}>{parts[1]}</span>
-          {parts[2]}
-        </>
-      );
+      const wordToStyle = parts[1];
+
+      if (headline === "Like, *really* good at sales.") {
+        return (
+          <>
+            {parts[0]}
+            <span className={styles.highlightContainer}>
+              {wordToStyle}
+              {isWordHighlighted && (
+                <motion.span
+                  className={styles.animatedMarker}
+                  initial={{ width: "0%" }}
+                  animate={{ width: "100%" }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                />
+              )}
+            </span>
+            {parts[2]}
+          </>
+        );
+      } else {
+        // For other instances of *word*
+        return (
+          <>
+            {parts[0]}
+            <span className={styles.underlineText}>{wordToStyle}</span>
+            {parts[2]}
+          </>
+        );
+      }
     }
     return headline;
   };
@@ -271,11 +342,14 @@ function TweetSection({
         </a>
       );
     }
-    return <span className={styles.contactTextItem}>{line}</span>; // For non-link text like the name
+    return <span className={styles.contactTextItem}>{line}</span>;
   };
 
   return (
-    <div className={styles.tweetSection}>
+    <div
+      className={styles.tweetSection}
+      ref={headline === "Like, *really* good at sales." ? sectionRef : null}
+    >
       <div className={styles.tweetCard}>
         <div className={styles.tweetBody}>
           {number && <p className={styles.tweetNumber}>{number}.</p>}
@@ -491,7 +565,9 @@ const tweetData = [
   {
     number: "14",
     headline: "I'm still here.",
-    bodyText: `I only learned about the open position two days ago and now the job post is gone. Doesn\'t matter. I won\'t let this slide on a technicality.\\n\\nIt\'s like Sam says - sometimes you have to get on a plane to close the deal. If I can find an uncringy way to come to your offices and shake your hand, I\'ll do it.`,
+    bodyText: `I only learned about the open position only two days ago and now the job post is gone. Doesn\'t matter. I won\'t let this slide on a technicality.
+
+It\'s like Sam says - sometimes you have to get on a plane to close the deal. I'm willing to do that and go the extra mile.`,
   },
   {
     number: "",

@@ -721,9 +721,9 @@ const tweetData = [
   },
   {
     number: "11",
-    headline: "I love the future OpenAI is building.",
+    headline: "I really want to work at OpenAI (and not anywhere else).",
     bodyText:
-      "I can see the impact firsthand. My mom uses ChatGPT. My sister, who's not technical at all, uses it daily. Watching AI transform the lives of people I care about... that's when you know this is something wonderful. And it's just the beginning.",
+      "I love the future you are building. I can see the impact firsthand. My mom uses ChatGPT. My sister, who's not technical at all, uses it daily. Watching AI transform the lives of people I care about... that's when you know this is something wonderful. And it's just the beginning.",
   },
   {
     number: "12",

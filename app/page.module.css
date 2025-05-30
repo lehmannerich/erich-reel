@@ -346,9 +346,10 @@
 }
 
 .tweetChecklistItem svg {
-  width: 18px !important;
-  height: 18px !important;
-  fill: #00ba7c; /* Green checkmark */
+  fill: var(--primary-color);
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
   flex-shrink: 0;
 }
 
@@ -416,4 +417,102 @@
     line-height: 1.5 !important;
     margin-bottom: 0.4em !important;
   }
+}
+
+/* --- Logo Carousel Styles --- */
+.logoCarouselOuterContainer {
+  width: 100%;
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+.logoCarouselContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+  height: var(
+    --logo-carousel-height-desktop,
+    120px
+  ); /* Use CSS var, fallback for safety */
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.logoCarouselSlide {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+}
+
+.logoCarouselSlide img {
+  /* Company Logos */
+  max-width: var(--logo-max-width-desktop-percent, 70%);
+  max-height: var(--logo-max-height-desktop-percent, 70%);
+  object-fit: contain;
+}
+
+.stampOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 5;
+}
+
+.stampOverlay img {
+  /* "closed.png" Stamp */
+  max-width: var(--stamp-max-width-desktop-percent, 50%);
+  max-height: var(--stamp-max-height-desktop-percent, 50%);
+  object-fit: contain;
+}
+
+/* Removed .logoCarouselButton and its hover/svg styles */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .logoCarouselOuterContainer {
+    /* On mobile, if the parent .tweetCard has padding, this might be needed to make it truly full-width */
+    /* margin-left: -16px; /* Assuming parent padding is 16px */
+    /* margin-right: -16px; /* Assuming parent padding is 16px */
+    /* width: calc(100% + 32px); /* Assuming parent padding is 16px on each side */
+  }
+
+  .tweetCard .logoCarouselOuterContainer {
+    /* More specific selector to override default padding */
+    margin-left: -24px; /* Counteract .tweetCard padding */
+    margin-right: -24px;
+    width: calc(100% + 48px);
+  }
+
+  .logoCarouselContainer {
+    height: var(--logo-carousel-height-mobile, 100px);
+    border-radius: 0; /* Full width, no rounded corners for the container itself */
+  }
+
+  .logoCarouselSlide {
+    border-radius: 0; /* Slide itself also no radius if container is full width */
+  }
+
+  .logoCarouselSlide img {
+    /* Company Logos on Mobile */
+    max-width: var(--logo-max-width-mobile-percent, 85%);
+    max-height: var(--logo-max-height-mobile-percent, 85%);
+  }
+
+  .stampOverlay img {
+    /* "closed.png" Stamp on Mobile */
+    max-width: var(--stamp-max-width-mobile-percent, 60%);
+    max-height: var(--stamp-max-height-mobile-percent, 60%);
+  }
+  /* Removed .logoCarouselButton svg responsive styles */
 }

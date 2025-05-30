@@ -2,9 +2,9 @@
 
 import { motion } from "framer-motion";
 import { splitText } from "motion-plus";
-import { animate, hover, useMotionValue } from "motion/react";
+import { animate, AnimatePresence, hover, useMotionValue, wrap } from "motion/react";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import styles from "./page.module.css";
 
 // --- Layout Configuration Variables ---
@@ -29,6 +29,24 @@ const SCATTER_ANIMATION_SPRING_DAMPING = 50;
 // --- Highlight Configuration Variables ---
 const HIGHLIGHT_INTERACTION_THRESHOLD = 0.75; // 75% of the element must be visible
 const HIGHLIGHT_DELAY_MS = 1000; // 1 second delay
+
+// --- Logo Carousel Configuration Variables ---
+const LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS = 700; // Faster: Time before stamp appears (was 1500)
+const LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS = 600; // Faster: Time the stamp stays visible (was 1000)
+
+// Desktop sizes
+const LOGO_CAROUSEL_HEIGHT_DESKTOP_PX = 120; // Bigger: Was 80px in CSS
+const LOGO_MAX_WIDTH_DESKTOP_PERCENT = 70; // Bigger: Was 80% for logo img, but container is wider now
+const LOGO_MAX_HEIGHT_DESKTOP_PERCENT = 70; // Bigger: Was 80%
+const STAMP_MAX_WIDTH_DESKTOP_PERCENT = 50; // Was 60%
+const STAMP_MAX_HEIGHT_DESKTOP_PERCENT = 50; // Was 60%
+
+// Mobile sizes
+const LOGO_CAROUSEL_HEIGHT_MOBILE_PX = 100; // Bigger: Was 70px in CSS
+const LOGO_MAX_WIDTH_MOBILE_PERCENT = 85; // Bigger: Was 70%
+const LOGO_MAX_HEIGHT_MOBILE_PERCENT = 85; // Bigger: Was 70%
+const STAMP_MAX_WIDTH_MOBILE_PERCENT = 60; // Bigger: Was 50%
+const STAMP_MAX_HEIGHT_MOBILE_PERCENT = 60; // Bigger: Was 50%
 // --- End of Configuration Variables ---
 
 export default function Home() {
@@ -212,6 +230,7 @@ interface TweetSectionProps {
   linkText?: string;
   linkUrl?: string;
   checklistItems?: string[];
+  logoCarouselItems?: string[];
 }
 
 function TweetSection({
@@ -222,6 +241,7 @@ function TweetSection({
   linkText,
   linkUrl,
   checklistItems,
+  logoCarouselItems,
 }: TweetSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -290,7 +310,6 @@ function TweetSection({
           </>
         );
       } else {
-        // For other instances of *word*
         return (
           <>
             {parts[0]}
@@ -370,6 +389,12 @@ function TweetSection({
               </p>
             ))
           ) : null}
+
+          {logoCarouselItems && logoCarouselItems.length > 0 && (
+            <div className={styles.logoCarouselOuterContainer}>
+              <LogoCarousel imagePaths={logoCarouselItems} />
+            </div>
+          )}
 
           {imageUrl && (
             <div className={styles.tweetImageContainer}>
@@ -458,6 +483,137 @@ function Stylesheet() {
   );
 }
 
+// --- LogoCarousel Component ---
+const LogoSlide = forwardRef(function LogoSlide(
+  {
+    imagePath,
+    direction,
+    isStamped,
+  }: {
+    imagePath: string;
+    direction: number;
+    isStamped: boolean;
+  },
+  ref: React.Ref<HTMLDivElement>
+) {
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: direction * 50 }}
+      animate={{
+        opacity: 1,
+        x: 0,
+        transition: {
+          delay: 0.2,
+          type: "spring",
+          stiffness: 200,
+          damping: 25,
+        },
+      }}
+      exit={{
+        opacity: 0,
+        x: direction * -50,
+        transition: { duration: 0.15 },
+      }}
+      className={styles.logoCarouselSlide}
+    >
+      <Image
+        src={imagePath}
+        alt={imagePath.split("/").pop()?.split(".")[0] || "logo"}
+        layout="fill"
+        objectFit="contain"
+      />
+      <AnimatePresence>
+        {isStamped && (
+          <motion.div
+            className={styles.stampOverlay}
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+              transition: { type: "spring", stiffness: 300, damping: 20, delay: 0.1 },
+            }}
+            exit={{
+              opacity: 0,
+              scale: 0.5,
+              transition: { duration: 0.2 },
+            }}
+          >
+            <Image
+              src="/closed.png"
+              alt="Closed Stamp"
+              width={100} // Placeholder, actual size controlled by CSS
+              height={100} // Placeholder, actual size controlled by CSS
+              objectFit="contain"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+});
+
+function LogoCarousel({ imagePaths }: { imagePaths: string[] }) {
+  if (!imagePaths || imagePaths.length === 0) return null;
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [isStamped, setIsStamped] = useState(false);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const advanceSlide = () => {
+    setIsStamped(false);
+    setDirection(1);
+    setCurrentIndex((prevIndex) => wrap(0, imagePaths.length, prevIndex + 1));
+  };
+
+  useEffect(() => {
+    const manageStampAndTransition = () => {
+      timeoutRef.current = setTimeout(() => {
+        setIsStamped(true);
+        timeoutRef.current = setTimeout(() => {
+          advanceSlide();
+        }, LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS);
+      }, LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS);
+    };
+
+    manageStampAndTransition();
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+    };
+  }, [currentIndex, imagePaths]);
+
+  // Inject CSS variables for sizing
+  const carouselStyles = {
+    "--logo-carousel-height-desktop": `${LOGO_CAROUSEL_HEIGHT_DESKTOP_PX}px`,
+    "--logo-max-width-desktop-percent": `${LOGO_MAX_WIDTH_DESKTOP_PERCENT}%`,
+    "--logo-max-height-desktop-percent": `${LOGO_MAX_HEIGHT_DESKTOP_PERCENT}%`,
+    "--stamp-max-width-desktop-percent": `${STAMP_MAX_WIDTH_DESKTOP_PERCENT}%`,
+    "--stamp-max-height-desktop-percent": `${STAMP_MAX_HEIGHT_DESKTOP_PERCENT}%`,
+    "--logo-carousel-height-mobile": `${LOGO_CAROUSEL_HEIGHT_MOBILE_PX}px`,
+    "--logo-max-width-mobile-percent": `${LOGO_MAX_WIDTH_MOBILE_PERCENT}%`,
+    "--logo-max-height-mobile-percent": `${LOGO_MAX_HEIGHT_MOBILE_PERCENT}%`,
+    "--stamp-max-width-mobile-percent": `${STAMP_MAX_WIDTH_MOBILE_PERCENT}%`,
+    "--stamp-max-height-mobile-percent": `${STAMP_MAX_HEIGHT_MOBILE_PERCENT}%`,
+  } as React.CSSProperties;
+
+  return (
+    <div className={styles.logoCarouselContainer} style={carouselStyles}>
+      <AnimatePresence custom={direction} initial={false} mode="popLayout">
+        <LogoSlide
+          key={currentIndex}
+          imagePath={imagePaths[currentIndex]}
+          direction={direction}
+          isStamped={isStamped}
+        />
+      </AnimatePresence>
+    </div>
+  );
+}
+
 // --- Home Component (data mapping) ---
 const tweetData = [
   {
@@ -475,7 +631,13 @@ const tweetData = [
     number: "2",
     headline: "I'm good at sales.",
     bodyText:
-      "In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k.",
+      "In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k. Here are some of them:",
+    logoCarouselItems: [
+      "/startupsales/kitekraft.png",
+      "/startupsales/aisupervision.png",
+      "/startupsales/voize.png",
+      "/startupsales/gitpod.png",
+    ],
   },
   {
     number: "3",

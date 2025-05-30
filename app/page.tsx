@@ -238,7 +238,6 @@ interface TweetSectionProps {
   logoCarouselItems?: string[];
   carouselStampAppearDelayMs?: number;
   carouselStampVisibleDurationMs?: number;
-  highlightPhraseInBody?: string;
 }
 
 function TweetSection({
@@ -252,7 +251,6 @@ function TweetSection({
   logoCarouselItems,
   carouselStampAppearDelayMs,
   carouselStampVisibleDurationMs,
-  highlightPhraseInBody,
 }: TweetSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -300,35 +298,13 @@ function TweetSection({
   const renderHeadline = () => {
     if (headline.includes("*")) {
       const parts = headline.split("*");
-      const wordToStyle = parts[1];
-
-      if (headline === "Like, *really* good at sales.") {
-        return (
-          <>
-            {parts[0]}
-            <span className={styles.highlightContainer}>
-              {wordToStyle}
-              {isWordHighlighted && (
-                <motion.span
-                  className={styles.animatedMarker}
-                  initial={{ width: "0%" }}
-                  animate={{ width: "100%" }}
-                  transition={{ duration: 0.5, ease: "easeOut" }}
-                />
-              )}
-            </span>
-            {parts[2]}
-          </>
-        );
-      } else {
-        return (
-          <>
-            {parts[0]}
-            <span className={styles.underlineText}>{wordToStyle}</span>
-            {parts[2]}
-          </>
-        );
-      }
+      return (
+        <>
+          {parts[0]}
+          <span className={styles.underlineText}>{parts[1]}</span>
+          {parts[2]}
+        </>
+      );
     }
     return headline;
   };
@@ -375,27 +351,8 @@ function TweetSection({
     return <span className={styles.contactTextItem}>{line}</span>;
   };
 
-  const renderHighlightedBodyText = (text: string, phrase: string) => {
-    if (!phrase || !text.includes(phrase)) {
-      return text;
-    }
-    const parts = text.split(new RegExp(`(${phrase})`, "gi"));
-    return parts.map((part, index) =>
-      part.toLowerCase() === phrase.toLowerCase() ? (
-        <span key={index} className={styles.bodyTextHighlight}>
-          {part}
-        </span>
-      ) : (
-        part
-      )
-    );
-  };
-
   return (
-    <div
-      className={styles.tweetSection}
-      ref={headline === "Like, *really* good at sales." ? sectionRef : null}
-    >
+    <div className={styles.tweetSection}>
       <div className={styles.tweetCard}>
         <div className={styles.tweetBody}>
           {number && <p className={styles.tweetNumber}>{number}.</p>}
@@ -412,9 +369,7 @@ function TweetSection({
           ) : bodyText ? (
             bodyText.split("\n\n").map((paragraph, index) => (
               <p key={index} className={styles.tweetBodyParagraph}>
-                {highlightPhraseInBody
-                  ? renderHighlightedBodyText(paragraph, highlightPhraseInBody)
-                  : paragraph}
+                {paragraph}
               </p>
             ))
           ) : null}
@@ -686,7 +641,6 @@ const tweetData = [
       "/startupsales/voize.png",
       "/startupsales/gitpod.png",
     ],
-    highlightPhraseInBody: "closed over €400k of sales volume in the first year",
   },
   {
     number: "3",
@@ -703,7 +657,6 @@ const tweetData = [
     ],
     carouselStampAppearDelayMs: LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS_FAST,
     carouselStampVisibleDurationMs: LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS_FAST,
-    highlightPhraseInBody: "within 2 years I closed over €1M worth of sales volume",
   },
   {
     number: "4",
@@ -795,10 +748,11 @@ It\'s like Sam says - sometimes you have to get on a plane to close the deal. I'
     number: "",
     headline: "Get in Touch",
     bodyText: `Erich Lehmann
-    +49 176 209 566 86
-    erichjohannlehmann@gmail.com
-    linkedin.com/in/erichlehmann
-    x.com/LehmannErich
-    github.com/lehmannerich`,
++49 176 209 566 86
+erichjohannlehmann@gmail.com
+linkedin.com/in/erichlehmann
+x.com/LehmannErich
+github.com/lehmannerich
+erich.vercel.app`,
   },
 ];

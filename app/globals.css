@@ -20,3 +20,72 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* --- Print Specific Styles --- */
+@media print {
+  body {
+    color: #000000 !important;
+    background-color: #ffffff !important;
+    font-family: serif; /* Optional: basic serif font for print */
+    font-size: 12pt; /* Optional: basic print size */
+    margin: 0.5in; /* Optional: basic margin */
+  }
+
+  /* Hide animations and interactive elements that don't make sense in print */
+  /* These will rely on the module class names being somewhat stable if not using global print classes */
+  /* For a truly minimal approach, you might even remove these and let them print if they don't break layout badly */
+  /* Or use more specific selectors if you know the exact structure */
+  div[class*="ScatterText_pageContainer__"], /* Attempt to target ScatterText container */
+  div[class*="page_scrollIndicator__"], /* Attempt to target scroll indicator */
+  div[class*="page_logoCarouselOuterContainer__"] /* Attempt to target logo carousels */ {
+    display: none !important;
+  }
+
+  /* General principle: avoid page breaks inside content blocks where possible */
+  div[class*="page_tweetSection__"],
+  div[class*="page_tweetCard__"] {
+    page-break-inside: avoid;
+  }
+
+  /* Ensure links are still somewhat visible if they don't have the ::after content */
+  a {
+    color: #000000 !important; /* Make links black for print */
+    text-decoration: underline !important; /* Underline links for print */
+  }
+
+  /* Optionally display full URLs after links */
+  a[href^="http"]::after,
+  a[href^="mailto"]::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #333333; /* Dark gray for URL */
+    word-break: break-all;
+  }
+  a[href^="#"]::after {
+    content: ""; /* Don't show for anchor links */
+  }
+
+  /* Reset any explicit web font colors on main text elements */
+  h1,
+  h2,
+  p {
+    color: #000000 !important;
+  }
+
+  /* Remove box shadows from tweet cards for print */
+  div[class*="page_tweetCard__"] {
+    box-shadow: none !important;
+    border: 1px solid #ccc !important; /* Simple border for print */
+  }
+
+  /* THE ONLY SPECIFIC CUSTOMIZATION YOU ASKED FOR: Constrain image width */
+  /* This will apply to ALL img elements. If too broad, we need a more specific selector */
+  /* To target only content images, you'd typically add a class to those images or their containers */
+  img {
+    max-width: 350px !important;
+    height: auto !important; /* Maintain aspect ratio */
+    display: block; /* Can help with layout */
+    margin: 0.5em auto; /* Center images with some vertical spacing */
+    page-break-inside: avoid;
+  }
+}

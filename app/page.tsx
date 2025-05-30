@@ -3,8 +3,12 @@
 import { animate, hover } from "motion";
 import { splitText } from "motion-plus";
 import { useMotionValue } from "motion/react";
+import Image from "next/image";
 import { useEffect, useRef } from "react";
 import styles from "./page.module.css";
+
+// --- Layout Configuration Variables ---
+const TWEET_SECTION_HEIGHT_VH = 80; // Height of each tweet section as percentage of viewport height
 
 // --- Animation Configuration Variables ---
 const IDLE_TRIGGER_DURATION_MS = 100;
@@ -29,7 +33,34 @@ export default function Home() {
       <ScatterText />
       <TweetSection
         number="1"
-        content="I vibe coded this crazy reel. I mean who does that?"
+        headline="I didn't just send you my resume."
+        bodyText="Instead, I vibe coded this site. I mean who does that?"
+      />
+      <TweetSection
+        number=""
+        headline="Oh, btw... this is me."
+        bodyText="I'm the one on the left."
+        imageUrl="/meandtheo.jpeg"
+      />
+      <TweetSection
+        number="2"
+        headline="I'm good at sales."
+        bodyText="In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k."
+      />
+      <TweetSection
+        number="3"
+        headline="Like, really good at sales."
+        bodyText="In 2020, I co-founded a company for virtual events and within 2 years I closed over €1M worth of sales volume. I was solely responsible for the sales pipeline and every deal we closed. These weren't easy deals, since we were selling to some of the most renowned research institutions in the world."
+      />
+      <TweetSection
+        number="4"
+        headline="Sales is not just sales."
+        bodyText="Since I had to start from scratch every time, I'm apt adjusting and evolving the deal structure as we evolve our understanding of the market and customer needs."
+      />
+      <TweetSection
+        number="5"
+        headline="I'm a founder and a YC alumnus"
+        bodyText="So I understand product, I understand the technical details and I can work in a high pressure, high stakes environment."
       />
     </>
   );
@@ -59,18 +90,14 @@ function ScatterText() {
   };
 
   const startIdleDetection = () => {
-    // Only start idle detection if a letter has been scattered
     if (!hasScatteredRef.current) return;
-
     clearTimeouts();
-
     idleTimeoutRef.current = setTimeout(() => {
       if (charsRef.current.length > 0) {
         isIdleAnimatingRef.current = true;
         charsRef.current.forEach((char, index) => {
           const randomRotation = (Math.random() - 0.5) * (IDLE_ROTATION_DEGREES * 2);
           const delay = index * IDLE_ANIMATION_STAGGER_MS;
-
           animate(
             char,
             { rotate: randomRotation },
@@ -82,7 +109,6 @@ function ScatterText() {
             }
           );
         });
-
         resetTimeoutRef.current = setTimeout(() => {
           if (isIdleAnimatingRef.current) {
             charsRef.current.forEach((char, index) => {
@@ -99,7 +125,7 @@ function ScatterText() {
               );
             });
             isIdleAnimatingRef.current = false;
-            hasScatteredRef.current = false; // Reset the flag after animation completes
+            hasScatteredRef.current = false;
           }
         }, RESET_TRIGGER_DURATION_MS);
       }
@@ -114,64 +140,45 @@ function ScatterText() {
 
   useEffect(() => {
     if (!containerRef.current) return;
-
     const h1Element = containerRef.current.querySelector("h1");
     if (!h1Element) return;
-
     const { chars } = splitText(h1Element);
     charsRef.current = chars;
-
-    // Throttled mouse move handler for better performance
     const handlePointerMove = (event: PointerEvent) => {
       const now = performance.now();
-
-      // Throttle to ~60fps max
       if (now - lastMouseMoveTime.current < 16) return;
       lastMouseMoveTime.current = now;
-
       const timeSinceLastEvent = (now - prevEvent.current) / 1000;
       prevEvent.current = now;
-
-      // Use requestAnimationFrame for smooth velocity updates
       requestAnimationFrame(() => {
         velocityX.set(event.movementX / timeSinceLastEvent);
         velocityY.set(event.movementY / timeSinceLastEvent);
       });
-
-      // Only reset idle state if we've scattered before
       if (hasScatteredRef.current) {
         resetIdleState();
       }
     };
-
     const handleVisibilityChange = () => {
       if (document.hidden) {
         clearTimeouts();
       } else {
-        // Use requestAnimationFrame to avoid blocking
         requestAnimationFrame(() => {
-          // Only reset if we've scattered before
           if (hasScatteredRef.current) {
             resetIdleState();
           }
         });
       }
     };
-
     document.addEventListener("pointermove", handlePointerMove, { passive: true });
     document.addEventListener("visibilitychange", handleVisibilityChange);
-
     hover(chars, (element) => {
-      // Mark that we've scattered at least once
       hasScatteredRef.current = true;
       resetIdleState();
-
       const speed = Math.sqrt(
         velocityX.get() * velocityX.get() + velocityY.get() * velocityY.get()
       );
       const angle = Math.atan2(velocityY.get(), velocityX.get());
       const distance = speed * SCATTER_DISTANCE_FACTOR;
-
       animate(
         element,
         {
@@ -185,10 +192,6 @@ function ScatterText() {
         }
       );
     });
-
-    // Don't start idle detection immediately anymore
-    // startIdleDetection();
-
     return () => {
       document.removeEventListener("pointermove", handlePointerMove);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
@@ -198,28 +201,50 @@ function ScatterText() {
 
   return (
     <div className={styles.pageContainer} ref={containerRef}>
-      <h1 className={styles.h1}>All the reasons I'd be great at OpenAI.</h1>
+      <h1 className={styles.h1}>18 reasons I'd be great at OpenAI.</h1>
+      <div className={styles.scrollIndicator}>
+        <div className={styles.scrollChevron}>
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+          </svg>
+        </div>
+        <span className={styles.scrollText}>scroll</span>
+      </div>
       <Stylesheet />
     </div>
   );
 }
 
-function TweetSection({ number, content }: { number: string; content: string }) {
+interface TweetSectionProps {
+  number: string;
+  headline: string;
+  bodyText?: string;
+  imageUrl?: string;
+}
+
+function TweetSection({ number, headline, bodyText, imageUrl }: TweetSectionProps) {
   return (
-    <div className={styles.tweetSection}>
+    <div
+      className={styles.tweetSection}
+      style={{ minHeight: `${TWEET_SECTION_HEIGHT_VH}vh` }}
+    >
       <div className={styles.tweetCard}>
         <div className={styles.tweetBody}>
           <h2 className={styles.tweetHeadline}>
-            <span className={styles.tweetNumber}>{number}.</span> {content}
+            {number && <span className={styles.tweetNumber}>{number}.</span>} {headline}
           </h2>
-          <p className={styles.tweetLoremIpsum}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-            incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis
-            nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
-            eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt
-            in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
+          {bodyText && <p className={styles.tweetLoremIpsum}>{bodyText}</p>}
+          {imageUrl && (
+            <div className={styles.tweetImageContainer}>
+              <Image
+                src={imageUrl}
+                alt={headline}
+                width={600}
+                height={400}
+                style={{ objectFit: "cover", borderRadius: "12px" }}
+              />
+            </div>
+          )}
         </div>
         <div className={styles.tweetFooter}>
           <div className={styles.tweetAction}>

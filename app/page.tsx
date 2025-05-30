@@ -119,6 +119,12 @@ function ScatterText() {
   };
 
   useEffect(() => {
+    console.log(
+      "%cHa! I had a feeling you might check out the console. Great minds think alike ;)",
+      "color: black; font-size: 1.8em; font-weight: bold; padding: 5px;"
+    );
+    console.log("");
+
     if (!containerRef.current) return;
     const h1Element = containerRef.current.querySelector("h1");
     if (!h1Element) return;
@@ -333,7 +339,7 @@ const tweetData = [
   {
     number: "1",
     headline: "I didn't just send you my resume.",
-    bodyText: "Instead, I vibe coded this site. I mean who does that?",
+    bodyText: "I also vibe coded this site. I mean who does that?",
   },
   {
     number: "",

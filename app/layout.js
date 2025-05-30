@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Motion Demo",
-  description: "Simple animation demo with Motion for React",
+  title: "You should hire Erich",
+  description: "At least invite him for an interview.",
 };
 
 export default function RootLayout({ children }) {

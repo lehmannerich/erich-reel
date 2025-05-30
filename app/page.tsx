@@ -31,22 +31,27 @@ const HIGHLIGHT_INTERACTION_THRESHOLD = 0.75; // 75% of the element must be visi
 const HIGHLIGHT_DELAY_MS = 1000; // 1 second delay
 
 // --- Logo Carousel Configuration Variables ---
-const LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS = 700; // Faster: Time before stamp appears (was 1500)
-const LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS = 600; // Faster: Time the stamp stays visible (was 1000)
+// Default (slower) timings
+const LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS_DEFAULT = 700;
+const LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS_DEFAULT = 600;
 
-// Desktop sizes
-const LOGO_CAROUSEL_HEIGHT_DESKTOP_PX = 120; // Bigger: Was 80px in CSS
-const LOGO_MAX_WIDTH_DESKTOP_PERCENT = 70; // Bigger: Was 80% for logo img, but container is wider now
-const LOGO_MAX_HEIGHT_DESKTOP_PERCENT = 70; // Bigger: Was 80%
-const STAMP_MAX_WIDTH_DESKTOP_PERCENT = 50; // Was 60%
-const STAMP_MAX_HEIGHT_DESKTOP_PERCENT = 50; // Was 60%
+// Faster timings for the second carousel
+const LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS_FAST = 400; // Faster
+const LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS_FAST = 350; // Faster
 
-// Mobile sizes
-const LOGO_CAROUSEL_HEIGHT_MOBILE_PX = 100; // Bigger: Was 70px in CSS
-const LOGO_MAX_WIDTH_MOBILE_PERCENT = 85; // Bigger: Was 70%
-const LOGO_MAX_HEIGHT_MOBILE_PERCENT = 85; // Bigger: Was 70%
-const STAMP_MAX_WIDTH_MOBILE_PERCENT = 60; // Bigger: Was 50%
-const STAMP_MAX_HEIGHT_MOBILE_PERCENT = 60; // Bigger: Was 50%
+// Desktop sizes (global for all carousels)
+const LOGO_CAROUSEL_HEIGHT_DESKTOP_PX = 120;
+const LOGO_MAX_WIDTH_DESKTOP_PERCENT = 70;
+const LOGO_MAX_HEIGHT_DESKTOP_PERCENT = 70;
+const STAMP_MAX_WIDTH_DESKTOP_PERCENT = 50;
+const STAMP_MAX_HEIGHT_DESKTOP_PERCENT = 50;
+
+// Mobile sizes (global for all carousels)
+const LOGO_CAROUSEL_HEIGHT_MOBILE_PX = 100;
+const LOGO_MAX_WIDTH_MOBILE_PERCENT = 85;
+const LOGO_MAX_HEIGHT_MOBILE_PERCENT = 85;
+const STAMP_MAX_WIDTH_MOBILE_PERCENT = 60;
+const STAMP_MAX_HEIGHT_MOBILE_PERCENT = 60;
 // --- End of Configuration Variables ---
 
 export default function Home() {
@@ -231,6 +236,8 @@ interface TweetSectionProps {
   linkUrl?: string;
   checklistItems?: string[];
   logoCarouselItems?: string[];
+  carouselStampAppearDelayMs?: number;
+  carouselStampVisibleDurationMs?: number;
 }
 
 function TweetSection({
@@ -242,6 +249,8 @@ function TweetSection({
   linkUrl,
   checklistItems,
   logoCarouselItems,
+  carouselStampAppearDelayMs,
+  carouselStampVisibleDurationMs,
 }: TweetSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -392,7 +401,11 @@ function TweetSection({
 
           {logoCarouselItems && logoCarouselItems.length > 0 && (
             <div className={styles.logoCarouselOuterContainer}>
-              <LogoCarousel imagePaths={logoCarouselItems} />
+              <LogoCarousel
+                imagePaths={logoCarouselItems}
+                stampAppearDelayMs={carouselStampAppearDelayMs}
+                stampVisibleDurationMs={carouselStampVisibleDurationMs}
+              />
             </div>
           )}
 
@@ -553,13 +566,28 @@ const LogoSlide = forwardRef(function LogoSlide(
   );
 });
 
-function LogoCarousel({ imagePaths }: { imagePaths: string[] }) {
+interface LogoCarouselProps {
+  imagePaths: string[];
+  stampAppearDelayMs?: number;
+  stampVisibleDurationMs?: number;
+}
+
+function LogoCarousel({
+  imagePaths,
+  stampAppearDelayMs,
+  stampVisibleDurationMs,
+}: LogoCarouselProps) {
   if (!imagePaths || imagePaths.length === 0) return null;
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [direction, setDirection] = useState<1 | -1>(1);
   const [isStamped, setIsStamped] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  const actualStampAppearDelay =
+    stampAppearDelayMs ?? LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS_DEFAULT;
+  const actualStampVisibleDuration =
+    stampVisibleDurationMs ?? LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS_DEFAULT;
 
   const advanceSlide = () => {
     setIsStamped(false);
@@ -573,8 +601,8 @@ function LogoCarousel({ imagePaths }: { imagePaths: string[] }) {
         setIsStamped(true);
         timeoutRef.current = setTimeout(() => {
           advanceSlide();
-        }, LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS);
-      }, LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS);
+        }, actualStampVisibleDuration);
+      }, actualStampAppearDelay);
     };
 
     manageStampAndTransition();
@@ -584,7 +612,7 @@ function LogoCarousel({ imagePaths }: { imagePaths: string[] }) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [currentIndex, imagePaths]);
+  }, [currentIndex, imagePaths, actualStampAppearDelay, actualStampVisibleDuration]);
 
   // Inject CSS variables for sizing
   const carouselStyles = {
@@ -631,7 +659,7 @@ const tweetData = [
     number: "2",
     headline: "I'm good at sales.",
     bodyText:
-      "In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k. Here are some of them:",
+      "In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k.",
     logoCarouselItems: [
       "/startupsales/kitekraft.png",
       "/startupsales/aisupervision.png",
@@ -643,7 +671,17 @@ const tweetData = [
     number: "3",
     headline: "Like, *really* good at sales.",
     bodyText:
-      "In 2020, I co-founded a company for virtual events and within 2 years I closed over €1M worth of sales volume. I was solely responsible for the sales pipeline and every deal we closed. These weren't easy deals, since we were selling to some of the most renowned research institutions in the world.",
+      "In 2020, I co-founded a company for virtual events and within 2 years I closed over €1M worth of sales volume. I was solely responsible for the sales pipeline and every deal we closed. These weren't easy deals, since we were selling to some of the most renowned research institutions in the world. Here are a few examples:",
+    logoCarouselItems: [
+      "/enterprisesales/1.png",
+      "/enterprisesales/2.png",
+      "/enterprisesales/3.png",
+      "/enterprisesales/4.png",
+      "/enterprisesales/5.png",
+      "/enterprisesales/6.png",
+    ],
+    carouselStampAppearDelayMs: LOGO_CAROUSEL_STAMP_APPEAR_DELAY_MS_FAST,
+    carouselStampVisibleDurationMs: LOGO_CAROUSEL_STAMP_VISIBLE_DURATION_MS_FAST,
   },
   {
     number: "4",

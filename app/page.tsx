@@ -1,8 +1,7 @@
 "use client";
 
-import { animate, hover } from "motion";
 import { splitText } from "motion-plus";
-import { useMotionValue } from "motion/react";
+import { animate, hover, useMotionValue } from "motion/react";
 import Image from "next/image";
 import { useEffect, useRef } from "react";
 import styles from "./page.module.css";
@@ -38,7 +37,6 @@ export default function Home() {
           visibleTweetCounter++;
           displayTweetNumber = visibleTweetCounter.toString();
         }
-        // Create a new object to avoid modifying the original tweetData array directly
         const tweetWithAutoNumber = { ...tweet, number: displayTweetNumber };
         return <TweetSection key={index} {...tweetWithAutoNumber} />;
       })}
@@ -187,7 +185,7 @@ function ScatterText() {
 
   return (
     <div className={styles.pageContainer} ref={containerRef}>
-      <h1 className={styles.h1}>14 reasons I'd be great at OpenAI.</h1>
+      <h1 className={styles.h1}>15 reasons I'd be great at OpenAI.</h1>
       <div className={styles.scrollIndicator}>
         <div className={styles.scrollChevron}>
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -223,7 +221,6 @@ function TweetSection({
   const renderHeadline = () => {
     if (headline.includes("*")) {
       const parts = headline.split("*");
-      // Assuming only one part to be underlined for simplicity
       return (
         <>
           {parts[0]}
@@ -235,18 +232,71 @@ function TweetSection({
     return headline;
   };
 
+  const renderContactLink = (line: string) => {
+    if (line.includes("@")) {
+      return (
+        <a href={`mailto:${line}`} className={styles.contactLinkItem}>
+          {line}
+        </a>
+      );
+    }
+    if (line.startsWith("+") && /[0-9]/.test(line)) {
+      return (
+        <a href={`tel:${line.replace(/\s/g, "")}`} className={styles.contactLinkItem}>
+          {line}
+        </a>
+      );
+    }
+    if (line.includes(".") && !line.startsWith("http")) {
+      return (
+        <a
+          href={`https://${line}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.contactLinkItem}
+        >
+          {line}
+        </a>
+      );
+    }
+    if (line.startsWith("http")) {
+      return (
+        <a
+          href={line}
+          target="_blank"
+          rel="noopener noreferrer"
+          className={styles.contactLinkItem}
+        >
+          {line}
+        </a>
+      );
+    }
+    return <span className={styles.contactTextItem}>{line}</span>; // For non-link text like the name
+  };
+
   return (
     <div className={styles.tweetSection}>
       <div className={styles.tweetCard}>
         <div className={styles.tweetBody}>
           {number && <p className={styles.tweetNumber}>{number}.</p>}
           <h2 className={styles.tweetHeadline}>{renderHeadline()}</h2>
-          {bodyText &&
+
+          {headline === "Get in Touch" && bodyText ? (
+            <div className={styles.contactList}>
+              {bodyText.split("\n").map((line, index) => (
+                <p key={index} className={styles.contactListItem}>
+                  {renderContactLink(line.trim())}
+                </p>
+              ))}
+            </div>
+          ) : bodyText ? (
             bodyText.split("\n\n").map((paragraph, index) => (
               <p key={index} className={styles.tweetBodyParagraph}>
                 {paragraph}
               </p>
-            ))}
+            ))
+          ) : null}
+
           {imageUrl && (
             <div className={styles.tweetImageContainer}>
               <Image
@@ -440,9 +490,17 @@ const tweetData = [
   },
   {
     number: "14",
-    headline: "I'm late, but still here.",
-    bodyText: `I only learned about the open position two days ago and now the job post is gone now. I keep going anyways, like I will keep going for every lead I bring home to OpenAI.
-
-It's like Sam says - sometimes you have to get on a plane to close the deal. I have that kind of grit.`,
+    headline: "I'm still here.",
+    bodyText: `I only learned about the open position two days ago and now the job post is gone. Doesn\'t matter. I won\'t let this slide on a technicality.\\n\\nIt\'s like Sam says - sometimes you have to get on a plane to close the deal. If I can find an uncringy way to come to your offices and shake your hand, I\'ll do it.`,
+  },
+  {
+    number: "",
+    headline: "Get in Touch",
+    bodyText: `Erich Lehmann
+    +49 176 209 566 86
+    erichjohannlehmann@gmail.com
+    linkedin.com/in/erichlehmann
+    x.com/LehmannErich
+    github.com/lehmannerich`,
   },
 ];

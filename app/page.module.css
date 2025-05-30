@@ -146,11 +146,12 @@
   line-height: 1.6;
   color: #333333;
   margin: 0;
-  margin-bottom: 1em; /* Add space between paragraphs */
+  margin-bottom: 0.5em; /* Slightly reduced margin for list-like items */
+  white-space: pre-line; /* Ensure \n are respected for line breaks */
 }
 
 .tweetBodyParagraph:last-child {
-  margin-bottom: 16px; /* Keep consistent margin before image/link if it's the last paragraph */
+  margin-bottom: 16px;
 }
 
 .tweetImageContainer {
@@ -250,9 +251,9 @@
   }
 
   .tweetBodyParagraph {
-    font-size: 1.2rem !important;
+    font-size: 1.1rem !important; /* Ensure contact info is readable */
     line-height: 1.5 !important;
-    margin-bottom: 0.75em !important;
+    margin-bottom: 0.4em !important;
   }
 
   .tweetBodyParagraph:last-child {
@@ -296,6 +297,22 @@
     width: 16px !important;
     height: 16px !important;
   }
+
+  .floatingToolbarContainer {
+    width: auto; /* Allow content to define width, then adjust with padding */
+    max-width: calc(100% - 40px); /* Ensure it doesn't touch edges */
+    padding: 8px 12px; /* Adjust mobile padding */
+    gap: 10px; /* Adjust mobile gap */
+    /* Centering with left: 50% and transform: translateX(-50%) is fine for mobile too */
+  }
+
+  .toolbarItem {
+    font-size: 0.85rem;
+    gap: 5px;
+  }
+  .toolbarItem i {
+    font-size: 0.85rem;
+  }
 }
 
 .tweetLink {
@@ -337,4 +354,44 @@
 
 .underlineText {
   text-decoration: underline;
+}
+
+/* Contact List Styles */
+.contactList {
+  margin-top: 16px; /* Space above the contact list */
+}
+
+.contactListItem {
+  margin-bottom: 8px; /* Space between contact items */
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.contactLinkItem {
+  color: #1d9bf0; /* Standard link blue */
+  text-decoration: none;
+  word-break: break-all; /* Break long URLs/emails */
+}
+
+.contactLinkItem:hover {
+  text-decoration: underline;
+}
+
+.contactTextItem {
+  color: #333333; /* Standard text color for non-links like the name */
+}
+
+/* Mobile responsive styles */
+@media (max-width: 768px) {
+  /* ... other mobile styles ... */
+
+  .contactListItem {
+    font-size: 1rem;
+  }
+
+  .tweetBodyParagraph {
+    font-size: 1.1rem !important; /* Ensure contact info is readable */
+    line-height: 1.5 !important;
+    margin-bottom: 0.4em !important;
+  }
 }

@@ -98,9 +98,13 @@
 .tweetSection {
   display: flex;
   justify-content: center;
-  align-items: center;
   background: #ffffff;
   padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.tweetSection:last-child {
+  margin-bottom: 0;
 }
 
 .tweetCard {
@@ -126,21 +130,27 @@
   font-weight: 700;
   line-height: 1.3;
   color: #0f1419;
-  margin-bottom: 16px; /* Space between headline and lorem ipsum */
+  margin-bottom: 16px; /* Space between headline and body text/image/link */
 }
 
 .tweetNumber {
   font-weight: 700;
   color: #1d9bf0;
-  margin-right: 8px;
+  /* margin-right: 8px; */ /* Removed as it's now on its own line */
+  margin-bottom: 8px; /* Space between number and headline */
+  font-size: 1.9rem; /* Match headline size */
 }
 
-.tweetLoremIpsum {
-  font-size: 1.2rem; /* Slightly larger body text */
+.tweetBodyParagraph {
+  font-size: 1.2rem;
   line-height: 1.6;
-  color: #333333; /* Darker gray for body text */
+  color: #333333;
   margin: 0;
-  margin-bottom: 16px; /* Add margin if there's an image below */
+  margin-bottom: 1em; /* Add space between paragraphs */
+}
+
+.tweetBodyParagraph:last-child {
+  margin-bottom: 16px; /* Keep consistent margin before image/link if it's the last paragraph */
 }
 
 .tweetImageContainer {
@@ -160,7 +170,7 @@
 /* Tweet Footer */
 .tweetFooter {
   /* margin-left: 0; /* Removed left margin */
-  display: flex;
+  display: none; /* Hide the footer */
   justify-content: space-around; /* Space out actions more evenly */
   max-width: 100%; /* Footer can take full width of card */
   padding-top: 16px;
@@ -214,42 +224,117 @@
 /* Mobile responsive styles */
 @media (max-width: 768px) {
   .tweetSection {
-    padding: 1rem; /* Reduced padding on mobile */
+    padding: 0; /* Ensures content within can go full-width */
+    min-height: auto !important; /* Allow natural height */
+    margin-bottom: 0; /* Mobile uses margin on .tweetCard instead */
   }
 
   .tweetCard {
-    padding: 16px; /* Reduced card padding on mobile */
-    max-width: 100%; /* Use full width on mobile */
-    margin: 0 8px; /* Small side margins on mobile */
+    padding: 32px 16px; /* Internal padding for content */
+    max-width: 100%;
+    margin: 0; /* No horizontal margins */
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    border-bottom: 1px solid #e0e0e0; /* Slightly darker border for better visibility */
+    margin-bottom: 16px; /* Adds space between tweets */
+  }
+
+  .tweetCard:last-child {
+    margin-bottom: 0; /* No extra space after the last tweet */
   }
 
   .tweetHeadline {
-    font-size: 1.8rem !important; /* Smaller headline on mobile */
-    margin-bottom: 12px !important; /* Reduced margin */
-  }
-
-  .tweetLoremIpsum {
-    font-size: 1.2rem !important; /* Smaller body text on mobile */
-    line-height: 1.5 !important; /* Tighter line height */
-    margin-bottom: 12px !important; /* Reduced margin */
-  }
-
-  .tweetImageContainer {
-    margin-top: 12px !important; /* Reduced margins */
+    font-size: 1.8rem !important;
     margin-bottom: 12px !important;
   }
 
+  .tweetBodyParagraph {
+    font-size: 1.2rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 0.75em !important;
+  }
+
+  .tweetBodyParagraph:last-child {
+    margin-bottom: 12px !important;
+  }
+
+  .tweetImageContainer {
+    margin-top: 12px !important;
+    margin-bottom: 12px !important;
+    margin-left: -16px !important;
+    margin-right: -16px !important;
+    width: calc(100% + 32px) !important;
+  }
+
+  .tweetImageContainer img {
+    border-radius: 0 !important;
+  }
+
+  .tweetChecklistItem {
+    font-size: 1rem !important;
+    gap: 10px !important;
+    margin-bottom: 6px !important;
+  }
+
+  .tweetChecklistItem svg {
+    width: 18px !important;
+    height: 18px !important;
+  }
+
   .tweetFooter {
-    padding-top: 12px !important; /* Reduced footer padding */
+    padding-top: 12px !important;
+    border-top: 1px solid #e0e0e0 !important; /* Match border color */
   }
 
   .tweetAction {
-    padding: 6px !important; /* Reduced action button padding */
-    font-size: 12px !important; /* Smaller action text */
+    padding: 6px !important;
+    font-size: 12px !important;
   }
 
   .tweetAction svg {
-    width: 16px !important; /* Smaller icons */
+    width: 16px !important;
     height: 16px !important;
   }
+}
+
+.tweetLink {
+  display: inline-block;
+  margin-top: 12px;
+  color: #1d9bf0;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1.1rem;
+  transition: opacity 0.2s ease;
+}
+
+.tweetLink:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+.tweetChecklist {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.tweetChecklistItem {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  line-height: 1.5;
+  color: #333333;
+}
+
+.tweetChecklistItem svg {
+  width: 18px !important;
+  height: 18px !important;
+  fill: #00ba7c; /* Green checkmark */
+  flex-shrink: 0;
+}
+
+.underlineText {
+  text-decoration: underline;
 }

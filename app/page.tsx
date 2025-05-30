@@ -8,7 +8,7 @@ import { useEffect, useRef } from "react";
 import styles from "./page.module.css";
 
 // --- Layout Configuration Variables ---
-const TWEET_SECTION_HEIGHT_VH = 80; // Height of each tweet section as percentage of viewport height
+const TWEET_SECTION_HEIGHT_VH = 60; // Height of each tweet section as percentage of viewport height
 
 // --- Animation Configuration Variables ---
 const IDLE_TRIGGER_DURATION_MS = 100;
@@ -28,40 +28,20 @@ const SCATTER_ANIMATION_SPRING_DAMPING = 50;
 // --- End of Configuration Variables ---
 
 export default function Home() {
+  let visibleTweetCounter = 0;
   return (
     <>
       <ScatterText />
-      <TweetSection
-        number="1"
-        headline="I didn't just send you my resume."
-        bodyText="Instead, I vibe coded this site. I mean who does that?"
-      />
-      <TweetSection
-        number=""
-        headline="Oh, btw... this is me."
-        bodyText="I'm the one on the left."
-        imageUrl="/meandtheo.jpeg"
-      />
-      <TweetSection
-        number="2"
-        headline="I'm good at sales."
-        bodyText="In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k."
-      />
-      <TweetSection
-        number="3"
-        headline="Like, really good at sales."
-        bodyText="In 2020, I co-founded a company for virtual events and within 2 years I closed over €1M worth of sales volume. I was solely responsible for the sales pipeline and every deal we closed. These weren't easy deals, since we were selling to some of the most renowned research institutions in the world."
-      />
-      <TweetSection
-        number="4"
-        headline="Sales is not just sales."
-        bodyText="Since I had to start from scratch every time, I'm apt adjusting and evolving the deal structure as we evolve our understanding of the market and customer needs."
-      />
-      <TweetSection
-        number="5"
-        headline="I'm a founder and a YC alumnus"
-        bodyText="So I understand product, I understand the technical details and I can work in a high pressure, high stakes environment."
-      />
+      {tweetData.map((tweet, index) => {
+        let displayTweetNumber = "";
+        if (tweet.number !== "") {
+          visibleTweetCounter++;
+          displayTweetNumber = visibleTweetCounter.toString();
+        }
+        // Create a new object to avoid modifying the original tweetData array directly
+        const tweetWithAutoNumber = { ...tweet, number: displayTweetNumber };
+        return <TweetSection key={index} {...tweetWithAutoNumber} />;
+      })}
     </>
   );
 }
@@ -201,7 +181,7 @@ function ScatterText() {
 
   return (
     <div className={styles.pageContainer} ref={containerRef}>
-      <h1 className={styles.h1}>18 reasons I'd be great at OpenAI.</h1>
+      <h1 className={styles.h1}>14 reasons I'd be great at OpenAI.</h1>
       <div className={styles.scrollIndicator}>
         <div className={styles.scrollChevron}>
           <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -220,20 +200,47 @@ interface TweetSectionProps {
   headline: string;
   bodyText?: string;
   imageUrl?: string;
+  linkText?: string;
+  linkUrl?: string;
+  checklistItems?: string[];
 }
 
-function TweetSection({ number, headline, bodyText, imageUrl }: TweetSectionProps) {
+function TweetSection({
+  number,
+  headline,
+  bodyText,
+  imageUrl,
+  linkText,
+  linkUrl,
+  checklistItems,
+}: TweetSectionProps) {
+  const renderHeadline = () => {
+    if (headline.includes("*")) {
+      const parts = headline.split("*");
+      // Assuming only one part to be underlined for simplicity
+      return (
+        <>
+          {parts[0]}
+          <span className={styles.underlineText}>{parts[1]}</span>
+          {parts[2]}
+        </>
+      );
+    }
+    return headline;
+  };
+
   return (
-    <div
-      className={styles.tweetSection}
-      style={{ minHeight: `${TWEET_SECTION_HEIGHT_VH}vh` }}
-    >
+    <div className={styles.tweetSection}>
       <div className={styles.tweetCard}>
         <div className={styles.tweetBody}>
-          <h2 className={styles.tweetHeadline}>
-            {number && <span className={styles.tweetNumber}>{number}.</span>} {headline}
-          </h2>
-          {bodyText && <p className={styles.tweetLoremIpsum}>{bodyText}</p>}
+          {number && <p className={styles.tweetNumber}>{number}.</p>}
+          <h2 className={styles.tweetHeadline}>{renderHeadline()}</h2>
+          {bodyText &&
+            bodyText.split("\n\n").map((paragraph, index) => (
+              <p key={index} className={styles.tweetBodyParagraph}>
+                {paragraph}
+              </p>
+            ))}
           {imageUrl && (
             <div className={styles.tweetImageContainer}>
               <Image
@@ -243,6 +250,23 @@ function TweetSection({ number, headline, bodyText, imageUrl }: TweetSectionProp
                 height={400}
                 style={{ objectFit: "cover", borderRadius: "12px" }}
               />
+            </div>
+          )}
+          {linkText && (
+            <a href={linkUrl} className={styles.tweetLink}>
+              {linkText}
+            </a>
+          )}
+          {checklistItems && (
+            <div className={styles.tweetChecklist}>
+              {checklistItems.map((item, index) => (
+                <div key={index} className={styles.tweetChecklistItem}>
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                  </svg>
+                  {item}
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -303,3 +327,116 @@ function Stylesheet() {
         `}</style>
   );
 }
+
+// --- Home Component (data mapping) ---
+const tweetData = [
+  {
+    number: "1",
+    headline: "I didn't just send you my resume.",
+    bodyText: "Instead, I vibe coded this site. I mean who does that?",
+  },
+  {
+    number: "",
+    headline: "Btw... this is me.",
+    bodyText: "I'm the one on the left.",
+    imageUrl: "/meandtheo.jpeg",
+  },
+  {
+    number: "2",
+    headline: "I'm good at sales.",
+    bodyText:
+      "In 2023, I started a new company from nothing and closed over €400k of sales volume in just the first year. I mainly sold to startups and the average deal size was €20k.",
+  },
+  {
+    number: "3",
+    headline: "Like, *really* good at sales.",
+    bodyText:
+      "In 2020, I co-founded a company for virtual events and within 2 years I closed over €1M worth of sales volume. I was solely responsible for the sales pipeline and every deal we closed. These weren't easy deals, since we were selling to some of the most renowned research institutions in the world.",
+  },
+  {
+    number: "4",
+    headline: "Like, doing it for a decade good at sales.",
+    bodyText:
+      "I started out my career at Deloitte Digital and even though I didn't do sales myself there, I was closely involved in the process - working together with some really experienced closers. I can't tell you the names of the companies, since I was under NDA, but these were some of the biggest companies in Germany.",
+  },
+  {
+    number: "4",
+    headline: "I started experimenting with OpenAI even before the hype.",
+    bodyText:
+      "I looked up the first time I hooked up to your API. This was in late 2022. This was before ChatGPT. I was like, 'this is the future.' And I've been wanting to be a part of that future ever since.",
+    imageUrl: "/init.png",
+  },
+  {
+    number: "5",
+    headline: "I'm a builder.",
+    bodyText:
+      "Not the greates tech wiz in the world, but I know my way around. I've been prototyping with AI constantly.",
+    imageUrl: "/commits.png",
+  },
+  {
+    number: "6",
+    headline: "I met Sam.",
+    bodyText:
+      "Briefly. Once. In the bluebottle coffee in Palo Alto. We shook hands and talked about YC. Not meaning to imply we know each other well - It's just that he might remember me. Although he probably doesn't - this was 5 years ago after all ¯\\_(ツ)_/¯",
+  },
+  {
+    number: "7",
+    headline: "I'm a founder and a YC alumnus.",
+    bodyText:
+      "So I understand product, I understand the technical details and I can work in a high pressure, high stakes environment. I can setup a sales process and I can build a sales team.",
+    imageUrl: "/yc.png",
+  },
+  {
+    number: "8",
+    headline: "I speak both German and English fluently.",
+    bodyText: "Check out my voice memos here.",
+  },
+  {
+    number: "9",
+    headline: "I get both vibes.",
+    bodyText:
+      "Born in Moldova, raised in Germany, and shaped by Silicon Valley. I'm in the valley at least once a year. I love the energy and the vision. At the same time, I know how German businesses think. I know what they fear and what makes them say yes.",
+    imageUrl: "/culture.png",
+  },
+
+  {
+    number: "10",
+    headline: "I check all the boxes.",
+    checklistItems: [
+      "Decade of experience in SaaS sales",
+      "Expert fluency in German and English",
+      "Great at designing deal strategies",
+      "Two time successful founder (YC W21)",
+      "Communicating technical concepts to customers",
+      "Passion for AI (even before the hype)",
+      "Based in Munich",
+      "Builder and Strategist",
+      "Excited by new challenges",
+    ],
+  },
+  {
+    number: "11",
+    headline: "I love the future OpenAI is building.",
+    bodyText:
+      "I can see the impact firsthand. My mom uses ChatGPT. My sister, who's not technical at all, uses it daily. Watching AI transform the lives of people I care about... that's when you know this is something wonderful. And it's just the beginning.",
+  },
+  {
+    number: "12",
+    headline: "I write well.",
+    bodyText:
+      "Not great yet, but good. And improving. Clear human communication is essential in sales and even more valuable now.",
+  },
+  {
+    number: "13",
+    headline: "I'm already in the trenches.",
+    bodyText:
+      "ChatGPT Pro subscriber since early days. Tried Claude,Perplexity, Gemini,  T3 Chat, and more. I know what developers need because I've been in their shoes.",
+  },
+  {
+    number: "14",
+    headline: "I'm late, but still here.",
+    bodyText: `I only learned about the open position two days ago and now the job post is gone now. I keep going anyways, like I will keep going for every lead I bring home to OpenAI.
+
+It's like Sam says - sometimes you have to get on a plane to close the deal. I have that kind of grit.`,
+  },
+];

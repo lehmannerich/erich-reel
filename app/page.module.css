@@ -494,3 +494,33 @@
   }
   /* Removed .logoCarouselButton svg responsive styles */
 }
+
+/* --- Audio Player Styles --- */
+.audioPlayersContainer {
+  margin-top: 16px;
+  margin-bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px; /* Space between multiple audio players */
+}
+
+.audioPlayerWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 6px; /* Space between title and audio controls */
+  padding: 10px;
+  background-color: #f9f9f9; /* Light background for the wrapper */
+  border-radius: 8px;
+  border: 1px solid #eeeeee;
+}
+
+.audioTitle {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #333333;
+}
+
+.audioControl {
+  width: 100%; /* Make audio controls take full width of their wrapper */
+  height: 40px; /* Standard height for audio controls */
+}

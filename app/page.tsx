@@ -227,6 +227,11 @@ function ScatterText() {
   );
 }
 
+interface AudioFile {
+  title: string;
+  src: string;
+}
+
 interface TweetSectionProps {
   number: string;
   headline: string;
@@ -238,6 +243,7 @@ interface TweetSectionProps {
   logoCarouselItems?: string[];
   carouselStampAppearDelayMs?: number;
   carouselStampVisibleDurationMs?: number;
+  audioFiles?: AudioFile[];
 }
 
 function TweetSection({
@@ -251,6 +257,7 @@ function TweetSection({
   logoCarouselItems,
   carouselStampAppearDelayMs,
   carouselStampVisibleDurationMs,
+  audioFiles,
 }: TweetSectionProps) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
@@ -373,6 +380,19 @@ function TweetSection({
               </p>
             ))
           ) : null}
+
+          {audioFiles && audioFiles.length > 0 && (
+            <div className={styles.audioPlayersContainer}>
+              {audioFiles.map((audio, index) => (
+                <div key={index} className={styles.audioPlayerWrapper}>
+                  <p className={styles.audioTitle}>{audio.title}</p>
+                  <audio controls src={audio.src} className={styles.audioControl}>
+                    Your browser does not support the audio element.
+                  </audio>
+                </div>
+              ))}
+            </div>
+          )}
 
           {logoCarouselItems && logoCarouselItems.length > 0 && (
             <div className={styles.logoCarouselOuterContainer}>
@@ -695,6 +715,10 @@ const tweetData = [
     number: "8",
     headline: "I speak both German and English fluently.",
     bodyText: "Check out my voice memos here.",
+    audioFiles: [
+      { title: "German Demo", src: "/voice/german.m4a" },
+      { title: "English Demo", src: "/voice/english.m4a" },
+    ],
   },
   {
     number: "9",

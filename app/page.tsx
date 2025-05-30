@@ -412,6 +412,7 @@ function TweetSection({
                 width={600}
                 height={400}
                 style={{ objectFit: "cover", borderRadius: "12px" }}
+                priority={imageUrl === "/meandtheo.jpeg"}
               />
             </div>
           )}

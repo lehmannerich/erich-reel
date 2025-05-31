@@ -696,7 +696,7 @@ const tweetData = [
     number: "5",
     headline: "I'm a builder.",
     bodyText:
-      "Not the greates tech wiz in the world, but I know my way around. I've been prototyping with AI constantly.",
+      "Not the greatest tech wiz in the world, but I know my way around. I've been prototyping with AI constantly.",
     imageUrl: "/commits.png",
   },
   {
@@ -709,7 +709,7 @@ const tweetData = [
     number: "7",
     headline: "I'm a founder and a YC alumnus.",
     bodyText:
-      "So I understand product, I understand the technical details and I can work in a high pressure, high stakes environment. I can setup a sales process and I can build a sales team.",
+      "So I understand product, I understand the technical details and I can work in a high pressure, high stakes environment. I can set up a sales process and I can build a sales team.",
     imageUrl: "/yc.png",
   },
   {
@@ -760,14 +760,14 @@ const tweetData = [
     number: "13",
     headline: "I'm already in the trenches.",
     bodyText:
-      "ChatGPT Pro subscriber since early days. Tried Claude,Perplexity, Gemini,  T3 Chat, and more. I know what developers need because I've been in their shoes.",
+      "ChatGPT Pro subscriber since early days. Tried Claude, Perplexity, Gemini,  T3 Chat, and more. I know what developers need because I've been in their shoes.",
   },
   {
     number: "14",
     headline: "I'm still here.",
-    bodyText: `I only learned about the open position only two days ago and now the job post is gone. Doesn\'t matter. I won\'t let this slide on a technicality.
+    bodyText: `I only learned about the open position two days ago and now the job post is gone. Doesn\'t matter. I won\'t let this slide on a technicality.
 
-It\'s like Sam says - sometimes you have to get on a plane to close the deal. I'm willing to do that and go the extra mile.`,
+It\'s like Sam says—sometimes you have to get on a plane to close the deal. I'm willing to do that and go the extra mile.`,
   },
   {
     number: "",
